@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mineral Conservation and Development Quiz</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for better aesthetics */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
+            Mineral Conservation and Development Quiz
+        </h1>
+
+        <div id="quiz-container">
+            <!-- Question counter -->
+            <div id="question-counter" class="text-lg text-gray-700 mb-4"></div>
+
+            <!-- Question text -->
+            <h2 id="question-text" class="text-2xl font-semibold text-gray-900 mb-6"></h2>
+
+            <!-- Options container -->
+            <div id="options-container" class="space-y-3 mb-6">
+                <!-- Options will be dynamically inserted here -->
+            </div>
+
+            <!-- Result message -->
+            <div id="result-message" class="mt-4 p-4 rounded-md text-center hidden"></div>
+
+            <!-- Navigation button -->
+            <div class="mt-6 flex justify-center">
+                <button id="next-question-btn" class="px-6 py-3 rounded-md text-white font-semibold transition-colors duration-200 bg-blue-400 cursor-not-allowed" disabled>
+                    Next Question
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz completed screen -->
+        <div id="quiz-completed-screen" class="hidden text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Quiz Completed!</h2>
+            <p id="final-score" class="text-xl text-gray-700 mb-6"></p>
+            <button id="restart-quiz-btn" class="px-6 py-3 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition-colors duration-200">
+                Restart Quiz
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Define the quiz questions and answers
+        const quizQuestions = [
+            {
+                question: "Under which Act are the Mineral Conservation and Development Rules, 2017 framed?",
+                options: [
+                    "Mines Act, 1952",
+                    "Mines and Minerals (Development & Regulation) Act, 1957",
+                    "Environment Protection Act, 1986",
+                    "Forest Conservation Act, 1980"
+                ],
+                answer: "Mines and Minerals (Development & Regulation) Act, 1957"
+            },
+            {
+                question: "The authority to approve a mining plan under MCDR, 2017 is:",
+                options: [
+                    "Controller General",
+                    "State Government",
+                    "Officer of the Indian Bureau of Mines",
+                    "Controller of Mines"
+                ],
+                answer: "Officer of the Indian Bureau of Mines"
+            },
+            {
+                question: "Annual return under Rule 45 of MCDR, 2017 must be submitted before:",
+                options: [
+                    "1st January",
+                    "1st April",
+                    "1st July",
+                    "30th September"
+                ],
+                answer: "1st July"
+            },
+            {
+                question: "The definition of 'environment' in MCDR, 2017 refers to which Act?",
+                options: [
+                    "Constitution of India",
+                    "Environment (Protection) Act, 1986",
+                    "Mines Act, 1952",
+                    "Water (Prevention and Control of Pollution) Act, 1974"
+                ],
+                answer: "Environment (Protection) Act, 1986"
+            },
+            {
+                question: "Who is the competent authority for mining plan decisions under Rule 10(1) of MCDR, 2017?",
+                options: [
+                    "Geologist",
+                    "Controller of Mines",
+                    "Controller General",
+                    "Collector"
+                ],
+                answer: "Controller of Mines"
+            },
+            {
+                question: "Category A and B mines under MCDR, 2017 must have:",
+                options: [
+                    "Geologist only",
+                    "Mining Engineer only",
+                    "Both mining engineer and geologist",
+                    "None of the above"
+                ],
+                answer: "Both mining engineer and geologist"
+            },
+            {
+                question: "Powers of Regional Controller under MCDR, 2017 can be exercised by:",
+                options: [
+                    "Controller of Mines",
+                    "Chief Controller of Mines",
+                    "Controller General",
+                    "All of the above"
+                ],
+                answer: "All of the above"
+            },
+            {
+                question: "Rule 35 of MCDR, 2017 deals with:",
+                options: [
+                    "Mine closure",
+                    "Drilling records",
+                    "Conservation of minerals",
+                    "Submission of returns"
+                ],
+                answer: "Mine closure"
+            },
+            {
+                question: "A mining plan should include:",
+                options: [
+                    "Environmental management plan",
+                    "Safety measures",
+                    "Method of mining",
+                    "All of the above"
+                ],
+                answer: "All of the above"
+            },
+            {
+                question: "The obligation to conserve minerals is:",
+                options: [
+                    "Only for large mines",
+                    "Mandatory for all mine holders",
+                    "Optional for leaseholders",
+                    "Only for state-owned mines"
+                ],
+                answer: "Mandatory for all mine holders"
+            },
+            {
+                question: "Under the Mineral Conservation and Development Rules, the main objective is to:",
+                options: [
+                    "Maximize production",
+                    "Regulate exports",
+                    "Ensure systematic and scientific mining",
+                    "All of the above"
+                ],
+                answer: "Ensure systematic and scientific mining"
+            },
+            {
+                question: "Which document must a lessee submit annually under MCDR, 2017?",
+                options: [
+                    "Mining plan",
+                    "Financial report",
+                    "Environment audit report",
+                    "Annual return"
+                ],
+                answer: "Annual return"
+            },
+            {
+                question: "Which body regulates the mining of major minerals in India?",
+                options: [
+                    "State government",
+                    "Indian Bureau of Mines",
+                    "Supreme Court",
+                    "Ministry of Environment"
+                ],
+                answer: "Indian Bureau of Mines"
+            },
+            {
+                question: "Environmental clearance for mining is granted by:",
+                options: [
+                    "Ministry of Mines",
+                    "State Pollution Control Board",
+                    "Ministry of Environment, Forest and Climate Change",
+                    "Indian Bureau of Mines"
+                ],
+                answer: "Ministry of Environment, Forest and Climate Change"
+            },
+            {
+                question: "Violation of MCDR, 2017 may result in:",
+                options: [
+                    "Penalty only",
+                    "Suspension of mining operations",
+                    "Imprisonment",
+                    "Suspension and penalty"
+                ],
+                answer: "Suspension and penalty"
+            },
+            {
+                question: "Which Rule prescribes the requirement of mining engineers in every mine?",
+                options: [
+                    "Rule 53",
+                    "Rule 55",
+                    "Rule 45",
+                    "Rule 13"
+                ],
+                answer: "Rule 55"
+            },
+            {
+                question: "Classification of minerals under MCDR, 2017 depends on:",
+                options: [
+                    "Mode of occurrence",
+                    "Use",
+                    "Legal notifications",
+                    "All of the above"
+                ],
+                answer: "All of the above"
+            },
+            {
+                question: "\"Progressive mine closure plan\" is part of:",
+                options: [
+                    "Prospecting license",
+                    "Mining plan",
+                    "Environmental clearance",
+                    "Lease deed"
+                ],
+                answer: "Mining plan"
+            },
+            {
+                question: "The grant of reconnaissance permit is governed by:",
+                options: [
+                    "Mines Act, 1952",
+                    "MCDR, 2017",
+                    "Mines and Minerals (Development & Regulation) Act, 1957",
+                    "Forest Conservation Act, 1980"
+                ],
+                answer: "Mines and Minerals (Development & Regulation) Act, 1957"
+            },
+            {
+                question: "Indian Bureau of Mines is under the aegis of:",
+                options: [
+                    "Ministry of Mines",
+                    "Ministry of Environment",
+                    "NITI Aayog",
+                    "Geological Survey of India"
+                ],
+                answer: "Ministry of Mines"
+            },
+            {
+                question: "Which is the largest producer of bauxite globally?",
+                options: [
+                    "India",
+                    "Australia",
+                    "Brazil",
+                    "Russia"
+                ],
+                answer: "Australia"
+            },
+            {
+                question: "Golconda mines are famous for:",
+                options: [
+                    "Gold",
+                    "Iron",
+                    "Diamonds",
+                    "Copper"
+                ],
+                answer: "Diamonds"
+            },
+            {
+                question: "Bombay High is known for:",
+                options: [
+                    "Coal",
+                    "Petroleum",
+                    "Gold",
+                    "Iron ore"
+                ],
+                answer: "Petroleum"
+            },
+            {
+                question: "The oldest oil well in India is at:",
+                options: [
+                    "Digboi",
+                    "Ankleshwar",
+                    "Bombay High",
+                    "Naharkatiya"
+                ],
+                answer: "Digboi"
+            },
+            {
+                question: "The major coal fields in India are found in:",
+                options: [
+                    "Maharashtra",
+                    "Jharkhand, West Bengal, Odisha",
+                    "Assam",
+                    "Kerala"
+                ],
+                answer: "Jharkhand, West Bengal, Odisha"
+            },
+            {
+                question: "The highest producer of manganese in India is:",
+                options: [
+                    "Odisha",
+                    "Madhya Pradesh",
+                    "Rajasthan",
+                    "Karnataka"
+                ],
+                answer: "Odisha"
+            },
+            {
+                question: "Which mineral is extracted at Jaduguda mines?",
+                options: [
+                    "Coal",
+                    "Iron",
+                    "Uranium",
+                    "Bauxite"
+                ],
+                answer: "Uranium"
+            },
+            {
+                question: "The Indian Copper Complex (ICC) is located in:",
+                options: [
+                    "Rajasthan",
+                    "Jharkhand",
+                    "Odisha",
+                    "Gujarat"
+                ],
+                answer: "Jharkhand"
+            },
+            {
+                question: "Which state is the largest producer of iron ore in India?",
+                options: [
+                    "Karnataka",
+                    "Odisha",
+                    "Chhattisgarh",
+                    "Goa"
+                ],
+                answer: "Odisha"
+            },
+            {
+                question: "Distribution of bauxite in India is concentrated in:",
+                options: [
+                    "Western Ghats",
+                    "Chota Nagpur Plateau",
+                    "Thar Desert",
+                    "Himalayas"
+                ],
+                answer: "Chota Nagpur Plateau"
+            },
+            {
+                question: "Which state has the major reserves of mica?",
+                options: [
+                    "Rajasthan",
+                    "Jharkhand",
+                    "Andhra Pradesh",
+                    "Madhya Pradesh"
+                ],
+                answer: "Andhra Pradesh"
+            },
+            {
+                question: "The mineral 'gypsum' is primarily found in:",
+                options: [
+                    "Assam",
+                    "Jammu & Kashmir",
+                    "Rajasthan",
+                    "Karnataka"
+                ],
+                answer: "Rajasthan"
+            },
+            {
+                question: "Copper mines are most abundant in:",
+                options: [
+                    "Jharkhand",
+                    "Rajasthan",
+                    "Orissa",
+                    "Bihar"
+                ],
+                answer: "Rajasthan"
+            },
+            {
+                question: "The Panna mines are famous for:",
+                options: [
+                    "Iron",
+                    "Coal",
+                    "Diamonds",
+                    "Uranium"
+                ],
+                answer: "Diamonds"
+            },
+            {
+                question: "For which mineral is Neyveli famous?",
+                options: [
+                    "Uranium",
+                    "Lignite",
+                    "Iron",
+                    "Bauxite"
+                ],
+                answer: "Lignite"
+            },
+            {
+                question: "Major lead-zinc deposits are located at:",
+                options: [
+                    "Hutti",
+                    "Zawar",
+                    "Ratnagiri",
+                    "Ranchi"
+                ],
+                answer: "Zawar"
+            },
+            {
+                question: "Which state is the largest producer of natural gas in India?",
+                options: [
+                    "Gujarat",
+                    "Assam",
+                    "Maharashtra",
+                    "Rajasthan"
+                ],
+                answer: "Gujarat"
+            },
+            {
+                question: "The Gulf of Khambhat and Gulf of Kachchh are located in:",
+                options: [
+                    "Tamil Nadu",
+                    "West Bengal",
+                    "Gujarat",
+                    "Kerala"
+                ],
+                answer: "Gujarat"
+            },
+            {
+                question: "The mineral chromite is mostly found in:",
+                options: [
+                    "Andhra Pradesh",
+                    "Jharkhand",
+                    "Odisha",
+                    "West Bengal"
+                ],
+                answer: "Odisha"
+            },
+            {
+                question: "Primary gold producing state in India:",
+                options: [
+                    "Bihar",
+                    "Rajasthan",
+                    "Karnataka",
+                    "Tamil Nadu"
+                ],
+                answer: "Karnataka"
+            },
+            {
+                question: "Minerals are considered non-renewable because:",
+                options: [
+                    "They can be replenished quickly",
+                    "They are exhaustible and take millions of years to form",
+                    "They are found everywhere",
+                    "They are abundant"
+                ],
+                answer: "They are exhaustible and take millions of years to form"
+            },
+            {
+                question: "The best way to conserve minerals is:",
+                options: [
+                    "Use at a fast rate",
+                    "Scientific mining and recycling",
+                    "Only for export",
+                    "Only for domestic use"
+                ],
+                answer: "Scientific mining and recycling"
+            },
+            {
+                question: "What is \"beneficiation\" in mineral processing?",
+                options: [
+                    "Waste disposal",
+                    "Ore concentration",
+                    "Mining method",
+                    "Closure of mine"
+                ],
+                answer: "Ore concentration"
+            },
+            {
+                question: "Dumping of overburden impacts:",
+                options: [
+                    "Air pollution",
+                    "Water pollution",
+                    "Land degradation",
+                    "None"
+                ],
+                answer: "Land degradation"
+            },
+            {
+                question: "Sustainable mining focuses on:",
+                options: [
+                    "Maximizing extraction",
+                    "Balancing resource use with environmental protection",
+                    "Ignoring local communities",
+                    "None of these"
+                ],
+                answer: "Balancing resource use with environmental protection"
+            },
+            {
+                question: "Use of low-grade ores is promoted to:",
+                options: [
+                    "Raise costs",
+                    "Increase waste",
+                    "Save high-grade ores",
+                    "Delay production"
+                ],
+                answer: "Save high-grade ores"
+            },
+            {
+                question: "The term \"progressive mine closure\" implies:",
+                options: [
+                    "Immediate closure",
+                    "Step-by-step reclamation of mined land",
+                    "Expansion of mining",
+                    "Sale of mines"
+                ],
+                answer: "Step-by-step reclamation of mined land"
+            },
+            {
+                question: "Use of alternative mineral substitutes leads to:",
+                options: [
+                    "Increased demand",
+                    "Conservation of scarce resources",
+                    "Overexploitation",
+                    "None"
+                ],
+                answer: "Conservation of scarce resources"
+            },
+            {
+                question: "Recycling metals helps conserve minerals by:",
+                options: [
+                    "Reducing extraction needs",
+                    "Decreasing employment",
+                    "Reducing imports",
+                    "Both a and c"
+                ],
+                answer: "Reducing extraction needs"
+            },
+            {
+                question: "Restoration of spoil heaps in mines aims to:",
+                options: [
+                    "Increase waste",
+                    "Beautify area",
+                    "Rehabilitate land for alternate uses",
+                    "None"
+                ],
+                answer: "Rehabilitate land for alternate uses"
+            },
+            {
+                question: "Which is NOT a conservation practice?",
+                options: [
+                    "Over-mining",
+                    "Recycling",
+                    "Legislation",
+                    "Use of modern technology"
+                ],
+                answer: "Over-mining"
+            },
+            {
+                question: "Which act mandates environmental protection in mining areas?",
+                options: [
+                    "Mines Act, 1952",
+                    "Environment Protection Act, 1986",
+                    "Water Act, 1974",
+                    "Wildlife Act, 1972"
+                ],
+                answer: "Environment Protection Act, 1986"
+            },
+            {
+                question: "Scientific mine planning aims to:",
+                options: [
+                    "Increase production only",
+                    "Reduce wastage and optimize extraction",
+                    "Ignore reclamation",
+                    "Ban mining"
+                ],
+                answer: "Reduce wastage and optimize extraction"
+            },
+            {
+                question: "The \"precautionary principle\" relates to:",
+                options: [
+                    "Mining safety",
+                    "Environmental conservation",
+                    "Financial investments",
+                    "Export policy"
+                ],
+                answer: "Environmental conservation"
+            },
+            {
+                question: "Biodiversity conservation is important during:",
+                options: [
+                    "Exploration",
+                    "Mining",
+                    "Post-mining land reclamation",
+                    "All of the above"
+                ],
+                answer: "All of the above"
+            },
+            {
+                question: "Mine closure plan follows:",
+                options: [
+                    "End of extraction",
+                    "Continuation of full operation",
+                    "Start of mining",
+                    "Lease renewal"
+                ],
+                answer: "End of extraction"
+            },
+            {
+                question: "Quarrying is:",
+                options: [
+                    "Deep underground mining",
+                    "Open surface mining for building stones",
+                    "Petroleum extraction",
+                    "In-situ leaching"
+                ],
+                answer: "Open surface mining for building stones"
+            },
+            {
+                question: "ISM Dhanbad is a premier institute for:",
+                options: [
+                    "Mining Engineering",
+                    "Law",
+                    "Medicine",
+                    "Physics"
+                ],
+                answer: "Mining Engineering"
+            },
+            {
+                question: "The \"company-managed mine\" responsibility for conservation lies with:",
+                options: [
+                    "State Government",
+                    "Central Government",
+                    "Mine management",
+                    "None of these"
+                ],
+                answer: "Mine management"
+            },
+            {
+                question: "Use of robots in mining helps in:",
+                options: [
+                    "Workforce reduction",
+                    "Increased pollution",
+                    "Safer and more efficient operations",
+                    "More accidents"
+                ],
+                answer: "Safer and more efficient operations"
+            },
+            {
+                question: "Rock that contains a valuable mineral in sufficient amount is called:",
+                options: [
+                    "Dump",
+                    "Gangue",
+                    "Ore",
+                    "Spoil"
+                ],
+                answer: "Ore"
+            },
+            {
+                question: "Most metallic minerals are found in:",
+                options: [
+                    "Igneous and metamorphic rocks",
+                    "Sedimentary rocks",
+                    "Alluvial deposits",
+                    "None"
+                ],
+                answer: "Igneous and metamorphic rocks"
+            },
+            {
+                question: "Mine safety is regulated under:",
+                options: [
+                    "Mines Act, 1952",
+                    "Forest Act",
+                    "Water Act",
+                    "None"
+                ],
+                answer: "Mines Act, 1952"
+            },
+            {
+                question: "The headquarters of Indian Bureau of Mines is in:",
+                options: [
+                    "Delhi",
+                    "Nagpur",
+                    "Varanasi",
+                    "Bengaluru"
+                ],
+                answer: "Nagpur"
+            },
+            {
+                question: "The Directorate General of Mines Safety is under:",
+                options: [
+                    "Ministry of Labour",
+                    "Ministry of Mines",
+                    "Central Pollution Board",
+                    "State Mining Boards"
+                ],
+                answer: "Ministry of Labour"
+            },
+            {
+                question: "\"Illegal mining\" refers to:",
+                options: [
+                    "Mining without storage license",
+                    "Mining without environmental clearance",
+                    "Mining without valid lease/license",
+                    "All of the above"
+                ],
+                answer: "All of the above"
+            },
+            {
+                question: "The \"chota nagpur plateau\" is rich in:",
+                options: [
+                    "Limestone",
+                    "Bauxite",
+                    "Coal & iron ore",
+                    "Sandstone"
+                ],
+                answer: "Coal & iron ore"
+            },
+            {
+                question: "Who studies the earth's crust for understanding minerals?",
+                options: [
+                    "Geologist",
+                    "Chemist",
+                    "Biologist",
+                    "Botanist"
+                ],
+                answer: "Geologist"
+            },
+            {
+                question: "National Mineral Policy aims at:",
+                options: [
+                    "Sustainable development",
+                    "Maximizing export",
+                    "Restricting imports",
+                    "None"
+                ],
+                answer: "Sustainable development"
+            },
+            {
+                question: "Which mineral is called \"liquid gold\"?",
+                options: [
+                    "Sodium",
+                    "Petroleum",
+                    "Mercury",
+                    "Bromine"
+                ],
+                answer: "Petroleum"
+            },
+            {
+                question: "Which Indian state has the largest reserves of coal?",
+                options: [
+                    "Jharkhand",
+                    "Punjab",
+                    "Rajasthan",
+                    "Kerala"
+                ],
+                answer: "Jharkhand"
+            },
+            {
+                question: "The mineral \"hematite\" is an ore of:",
+                options: [
+                    "Copper",
+                    "Iron",
+                    "Mica",
+                    "Aluminium"
+                ],
+                answer: "Iron"
+            },
+            {
+                question: "The main objective of mineral conservation is:",
+                options: [
+                    "Continued benefit to future generations",
+                    "Deplete resources rapidly",
+                    "Encourage wastage",
+                    "Restrict import"
+                ],
+                answer: "Continued benefit to future generations"
+            },
+            {
+                question: "GMDC Ltd is a leading mining company of:",
+                options: [
+                    "Odisha",
+                    "Gujarat",
+                    "Jharkhand",
+                    "Tamil Nadu"
+                ],
+                answer: "Gujarat"
+            },
+            {
+                question: "Lease period for major minerals (other than coal, lignite, and atomic minerals) is:",
+                options: [
+                    "10 years",
+                    "50 years",
+                    "30 years",
+                    "20 years"
+                ],
+                answer: "50 years"
+            },
+            {
+                question: "Which mineral is associated with the Kudremukh mine?",
+                options: [
+                    "Bauxite",
+                    "Iron",
+                    "Manganese",
+                    "Limestone"
+                ],
+                answer: "Iron"
+            },
+            {
+                question: "The mineral resource found in Tuticorin, Tamil Nadu is:",
+                options: [
+                    "Magnesium",
+                    "Gypsum",
+                    "Salt",
+                    "Uranium"
+                ],
+                answer: "Salt"
+            },
+            {
+                question: "Which mineral's overuse causes fluoride pollution?",
+                options: [
+                    "Bauxite",
+                    "Mica",
+                    "Fluorspar",
+                    "Graphite"
+                ],
+                answer: "Fluorspar"
+            },
+            {
+                question: "The scientific study of minerals is called:",
+                options: [
+                    "Mineralogy",
+                    "Metallurgy",
+                    "Geomorphology",
+                    "Petrology"
+                ],
+                answer: "Mineralogy"
+            },
+            {
+                question: "Geological maps are used in mining primarily to:",
+                options: [
+                    "Fix property boundaries",
+                    "Identify potential mineral deposits",
+                    "Design highways",
+                    "Urban planning"
+                ],
+                answer: "Identify potential mineral deposits"
+            },
+            {
+                question: "\"Red mud\" is the waste generated during extraction of:",
+                options: [
+                    "Iron",
+                    "Bauxite",
+                    "Mica",
+                    "Lead"
+                ],
+                answer: "Bauxite"
+            },
+            {
+                question: "The main pollutant from coal mining is:",
+                options: [
+                    "Methane",
+                    "Hydrogen",
+                    "Oxygen",
+                    "Nitrogen"
+                ],
+                answer: "Methane"
+            },
+            {
+                question: "Coal mining in India is mostly done by:",
+                options: [
+                    "Underground method",
+                    "Opencast method",
+                    "Placer method",
+                    "Hydraulic mining"
+                ],
+                answer: "Opencast method"
+            },
+            {
+                question: "Which is a non-metallic mineral?",
+                options: [
+                    "Manganese",
+                    "Mica",
+                    "Copper",
+                    "Iron"
+                ],
+                answer: "Mica"
+            },
+            {
+                question: "Which of the following is a ferrous mineral?",
+                options: [
+                    "Gold",
+                    "Copper",
+                    "Iron",
+                    "Bauxite"
+                ],
+                answer: "Iron"
+            },
+            {
+                question: "Sandstone and mica are:",
+                options: [
+                    "Non-metallic minerals",
+                    "Ferrous minerals",
+                    "Energy minerals",
+                    "Precious minerals"
+                ],
+                answer: "Non-metallic minerals"
+            },
+            {
+                question: "Main reason for environmental pollution by mining:",
+                options: [
+                    "Deforestation",
+                    "Underground mining",
+                    "Use of explosives",
+                    "Overburden dumping"
+                ],
+                answer: "Overburden dumping"
+            },
+            {
+                question: "\"Tailings\" in mining refers to:",
+                options: [
+                    "Valuable minerals",
+                    "Overburden rock",
+                    "Waste left after ore processing",
+                    "Equipment"
+                ],
+                answer: "Waste left after ore processing"
+            },
+            {
+                question: "Which one is NOT a major mineral under Indian mining law?",
+                options: [
+                    "Iron ore",
+                    "Limestone",
+                    "Marble",
+                    "Granite"
+                ],
+                answer: "Granite"
+            },
+            {
+                question: "Forest (Conservation) Act, 1980 was enacted to:",
+                options: [
+                    "Protect wildlife",
+                    "Conserve forests from non-forestry use",
+                    "Regulate air pollution",
+                    "Control water pollution"
+                ],
+                answer: "Conserve forests from non-forestry use"
+            },
+            {
+                question: "Which method is best for bulk transportation of minerals?",
+                options: [
+                    "Trucks",
+                    "Conveyor belts",
+                    "Pipelines",
+                    "Trains"
+                ],
+                answer: "Trains"
+            },
+            {
+                question: "The Chota Nagpur Plateau is famous for:",
+                options: [
+                    "Oil",
+                    "Non-metallic minerals",
+                    "Metallic minerals",
+                    "Marine resources"
+                ],
+                answer: "Metallic minerals"
+            },
+            {
+                question: "Main source of uranium in India?",
+                options: [
+                    "Kolar",
+                    "Jaduguda",
+                    "Hutti",
+                    "Zawar"
+                ],
+                answer: "Jaduguda"
+            },
+            {
+                question: "What is placer deposit?",
+                options: [
+                    "Sedimentary deposit with metallic mineral",
+                    "Igneous deposit",
+                    "Submarine volcanic deposit",
+                    "None"
+                ],
+                answer: "Sedimentary deposit with metallic mineral"
+            },
+            {
+                question: "Strategic minerals are needed for:",
+                options: [
+                    "Agriculture",
+                    "National security and industry",
+                    "Domestic use only",
+                    "Export"
+                ],
+                answer: "National security and industry"
+            },
+            {
+                question: "Which government body ensures safety in mines?",
+                options: [
+                    "Supreme Court",
+                    "Ministry of Petroleum",
+                    "Directorate General of Mines Safety",
+                    "Indian Bureau of Mines"
+                ],
+                answer: "Directorate General of Mines Safety"
+            },
+            {
+                question: "What is 'benefit sharing' in mining?",
+                options: [
+                    "Sharing company profits with labor",
+                    "Providing compensation and benefit to communities",
+                    "Increase taxation",
+                    "None of these"
+                ],
+                answer: "Providing compensation and benefit to communities"
+            },
+            {
+                question: "Mineral economics includes study of:",
+                options: [
+                    "Pricing",
+                    "Investment",
+                    "Utilization & conservation",
+                    "All of the above"
+                ],
+                answer: "All of the above"
+            },
+            {
+                question: "Bihar is rich in which minerals?",
+                options: [
+                    "Gold",
+                    "Iron and mica",
+                    "Copper",
+                    "Bauxite"
+                ],
+                answer: "Iron and mica"
+            },
+            {
+                question: "The main objective of mineral legislation in India is:",
+                options: [
+                    "Rapid depletion of minerals",
+                    "Planned and systematic development, conservation, and protection of environment",
+                    "Preservation only",
+                    "Taxation"
+                ],
+                answer: "Planned and systematic development, conservation, and protection of environment"
+            }
+        ];
+
+        // Get DOM elements
+        const quizContainer = document.getElementById('quiz-container');
+        const quizCompletedScreen = document.getElementById('quiz-completed-screen');
+        const questionCounter = document.getElementById('question-counter');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const resultMessage = document.getElementById('result-message');
+        const nextQuestionBtn = document.getElementById('next-question-btn');
+        const finalScore = document.getElementById('final-score');
+        const restartQuizBtn = document.getElementById('restart-quiz-btn');
+
+        // Quiz state variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswer = null;
+        let showResult = false;
+
+        /**
+         * Renders the current question and its options.
+         */
+        function renderQuestion() {
+            const currentQuestion = quizQuestions[currentQuestionIndex];
+            questionCounter.textContent = `Question ${currentQuestionIndex + 1} of ${quizQuestions.length}`;
+            questionText.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = ''; // Clear previous options
+            resultMessage.classList.add('hidden'); // Hide result message
+            nextQuestionBtn.disabled = true; // Disable next button initially
+            nextQuestionBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+            nextQuestionBtn.classList.add('bg-blue-400', 'cursor-not-allowed');
+            selectedAnswer = null;
+            showResult = false;
+
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add(
+                    'w-full', 'text-left', 'p-3', 'rounded-md', 'border-2', 'transition-all', 'duration-200',
+                    'bg-gray-50', 'border-gray-300', 'hover:bg-gray-100', 'cursor-pointer', 'font-medium', 'text-gray-800'
+                );
+                button.onclick = () => handleAnswerSelect(option, button);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        /**
+         * Handles the selection of an answer.
+         * @param {string} option - The selected answer option.
+         * @param {HTMLElement} clickedButton - The button element that was clicked.
+         */
+        function handleAnswerSelect(option, clickedButton) {
+            if (showResult) return; // Prevent multiple selections
+
+            selectedAnswer = option;
+            showResult = true;
+            nextQuestionBtn.disabled = false; // Enable next button
+            nextQuestionBtn.classList.remove('bg-blue-400', 'cursor-not-allowed');
+            nextQuestionBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+
+            // Disable all option buttons after selection
+            Array.from(optionsContainer.children).forEach(button => {
+                button.disabled = true;
+                button.classList.remove('hover:bg-gray-100', 'cursor-pointer');
+                button.classList.add('cursor-not-allowed');
+            });
+
+            // Show result message and apply styling
+            resultMessage.classList.remove('hidden');
+            if (selectedAnswer === quizQuestions[currentQuestionIndex].answer) {
+                score++;
+                resultMessage.classList.remove('bg-red-100', 'text-red-700');
+                resultMessage.classList.add('bg-green-100', 'text-green-700');
+                resultMessage.textContent = 'Correct!';
+                clickedButton.classList.remove('bg-gray-50', 'border-gray-300');
+                clickedButton.classList.add('bg-green-200', 'border-green-500');
+            } else {
+                resultMessage.classList.remove('bg-green-100', 'text-green-700');
+                resultMessage.classList.add('bg-red-100', 'text-red-700');
+                resultMessage.textContent = `Incorrect. The correct answer was: ${quizQuestions[currentQuestionIndex].answer}`;
+                clickedButton.classList.remove('bg-gray-50', 'border-gray-300');
+                clickedButton.classList.add('bg-red-200', 'border-red-500');
+
+                // Highlight the correct answer
+                Array.from(optionsContainer.children).forEach(button => {
+                    if (button.textContent === quizQuestions[currentQuestionIndex].answer) {
+                        button.classList.remove('bg-gray-50', 'border-gray-300');
+                        button.classList.add('border-green-500', 'bg-green-100');
+                    }
+                });
+            }
+
+            // Update button text for "Finish Quiz" if it's the last question
+            if (currentQuestionIndex === quizQuestions.length - 1) {
+                nextQuestionBtn.textContent = 'Finish Quiz';
+            }
+        }
+
+        /**
+         * Navigates to the next question or finishes the quiz.
+         */
+        function handleNextQuestion() {
+            if (currentQuestionIndex < quizQuestions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                showQuizCompletedScreen();
+            }
+        }
+
+        /**
+         * Displays the quiz completed screen with the final score.
+         */
+        function showQuizCompletedScreen() {
+            quizContainer.classList.add('hidden');
+            quizCompletedScreen.classList.remove('hidden');
+            finalScore.textContent = `You scored ${score} out of ${quizQuestions.length} questions.`;
+        }
+
+        /**
+         * Restarts the quiz from the beginning.
+         */
+        function handleRestartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedAnswer = null;
+            showResult = false;
+            quizCompletedScreen.classList.add('hidden');
+            quizContainer.classList.remove('hidden');
+            nextQuestionBtn.textContent = 'Next Question'; // Reset button text
+            renderQuestion();
+        }
+
+        // Event listeners
+        nextQuestionBtn.addEventListener('click', handleNextQuestion);
+        restartQuizBtn.addEventListener('click', handleRestartQuiz);
+
+        // Initial render when the page loads
+        window.onload = renderQuestion;
+    </script>
+</body>
+</html>
